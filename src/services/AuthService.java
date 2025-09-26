@@ -1,76 +1,105 @@
 package services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import helpers.Utils;
+import models.Person;
 import models.Client;
 import models.Manager;
-import models.Person;
 import models.enums.DepartmentType;
 import models.enums.Role;
 
+import java.util.Optional;
+
 public class AuthService {
+    private final ClientService clientService;
+    private final ManagerService managerService;
+    private Person currentUser;
 
-    private final List<Person> users;
-
-    public AuthService() {
-        this.users = new ArrayList<>();
+    public AuthService(ClientService clientService, ManagerService managerService) {
+        this.clientService = clientService;
+        this.managerService = managerService;
+        this.currentUser = null;
     }
 
-    // authenticate the user
-    public Optional<Person> login(String email, String password) {
-        return users.stream()
-                .filter(user -> user.getEmail().equals(email) && user.getPassword().equals(password))
+    public Manager registerManager(String firstName, String lastName, String email, String password, DepartmentType department) {
+        Optional<Manager> existingManager = managerService.getAllManagers().stream()
+                .filter(manager -> manager.getEmail().equals(email))
                 .findFirst();
-    }
-
-    // Register client
-    public Client registerClient(String firstName, String lastName, String email, String password) {
-        if (Utils.isEmailInUse(users, email)) {
-            throw new IllegalArgumentException("Email is already in use");
+        if (existingManager.isPresent()) {
+            throw new IllegalArgumentException("Manager with this email already exists");
         }
-        Client client = new Client(firstName, lastName, email, password, Role.CLIENT);
-        users.add(client);
-        return client;
-    }
-
-    // Register manager
-    public Manager registerManager(String firstName, String lastName, String email, String password, DepartmentType departmentType) {
-        if (Utils.isEmailInUse(users, email)) {
-            throw new IllegalArgumentException("Email is already in use");
-        }
-        Manager manager = new Manager(firstName, lastName, email, password, Role.MANAGER, departmentType);
-        users.add(manager);
+        Manager manager = new Manager(firstName, lastName, email, password, department);
+        managerService.addManager(manager);
         return manager;
     }
 
-    public List<Person> getAllUsers() {
-        return new ArrayList<>(users);
+
+    public Optional<Person> login(String email, String password, Role role) {
+        if (email == null || email.trim().isEmpty() ||
+            password == null || password.trim().isEmpty() ||
+            role == null) {
+            throw new IllegalArgumentException("Email, password, and role are required");
+        }
+
+        Person user = authenticateUser(email, password, role);
+        if (user != null) {
+            currentUser = user;
+            return Optional.of(user);
+        }
+
+        return Optional.empty();
     }
 
-    public Optional<Person> findUserByEmail(String email) {
-        return users.stream()
-                .filter(user -> user.getEmail().equals(email))
-                .findFirst();
+    public void logout() {
+        this.currentUser = null;
     }
 
-    public Optional<Person> findUserById(String id) {
-        return users.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst();
+    public boolean isLoggedIn() {
+        return currentUser != null;
     }
 
-    public boolean removeUser(Person user) {
-        return users.remove(user);
+    public Optional<Person> getCurrentUser() {
+        return Optional.ofNullable(currentUser);
     }
 
-    public void updatePassword(Person user, String newPassword) {
-        user.setPassword(newPassword);
+    public boolean isClient() {
+        return currentUser != null && currentUser.getRole() == Role.CLIENT;
     }
 
-    public void updateEmail(Person user, String email) {
-        user.setEmail(email);
+    public boolean isManager() {
+        return currentUser != null && currentUser.getRole() == Role.MANAGER;
     }
+
+    public Optional<Client> getCurrentClient() {
+        if (isClient()) {
+            return Optional.of((Client) currentUser);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Manager> getCurrentManager() {
+        if (isManager()) {
+            return Optional.of((Manager) currentUser);
+        }
+        return Optional.empty();
+    }
+
+    private Person authenticateUser(String email, String password, Role role) {
+        switch (role) {
+            case CLIENT:
+                if (clientService.validateClientCredentials(email, password)) {
+                    return clientService.findClientByEmail(email).orElse(null);
+                }
+                break;
+            case MANAGER:
+                if (managerService.validateManagerCredentials(email, password)) {
+                    return managerService.findManagerByEmail(email).orElse(null);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid role: " + role);
+        }
+        return null;
+    }
+
+
+
 }
