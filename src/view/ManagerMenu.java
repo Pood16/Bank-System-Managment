@@ -38,7 +38,11 @@ public class ManagerMenu {
 
     private boolean showManagerOptions() {
         Manager currentManager = authController.getCurrentManager().orElseThrow(() -> new IllegalStateException("No manager logged in"));
+        System.out.print("Press enter To continue....");
+        scanner.nextLine();
+        System.out.println("--------------------------------------------------------------------------");
         System.out.println("    MANAGER DASHBOARD - Welcome " + currentManager.getFullName());
+        System.out.println("--------------------------------------------------------------------------");
         System.out.println("CLIENT MANAGEMENT:");
         System.out.println("1.  Create New Client");
         System.out.println("2.  Update Client Information");
@@ -126,8 +130,7 @@ public class ManagerMenu {
         try {
             Client client = managerController.createClient(firstName, lastName, email, password);
             System.out.println("Client created successfully!");
-            System.out.println("Client ID: " + client.getId());
-            System.out.println("Name: " + client.getFullName());
+            System.out.println(client);
         } catch (Exception e) {
             System.out.println("Failed to create client: " + e.getMessage());
         }
@@ -161,7 +164,8 @@ public class ManagerMenu {
                 email.isEmpty() ? null : email
             );
             System.out.println("Client updated successfully!");
-            System.out.println("Updated Name: " + client.getFullName());
+            System.out.println("Updated Client informations: ");
+            System.out.println(client);
         } catch (Exception e) {
             System.out.println("Failed to update client: " + e.getMessage());
         }
@@ -177,7 +181,7 @@ public class ManagerMenu {
             return;
         }
 
-        System.out.print("Are you sure you want to delete this client? (yes/no): ");
+        System.out.print("Confirm delete action(yes): ");
         String confirmation = scanner.nextLine().trim();
 
         if (!"yes".equalsIgnoreCase(confirmation)) {
@@ -230,9 +234,7 @@ public class ManagerMenu {
 
             Account account = managerController.createAccountForClient(clientId, accountType, initialBalance);
             System.out.println("Account created successfully!");
-            System.out.println("Account ID: " + account.getAccountId());
-            System.out.println("Type: " + account.getAccountType());
-            System.out.println("Initial Balance: " + account.getBalance() + " MAD");
+            System.out.println(account);
         } catch (NumberFormatException e) {
             System.out.println("Please enter valid numbers.");
         } catch (Exception e) {
@@ -265,8 +267,7 @@ public class ManagerMenu {
 
             Account account = managerController.updateAccountType(accountId, newAccountType);
             System.out.println("Account type updated successfully!");
-            System.out.println("Account ID: " + account.getAccountId());
-            System.out.println("New Type: " + account.getAccountType());
+            System.out.println(account);
         } catch (NumberFormatException e) {
             System.out.println("Please enter a valid number.");
         } catch (Exception e) {
@@ -284,7 +285,7 @@ public class ManagerMenu {
             return;
         }
 
-        System.out.print("Are you sure you want to delete this account? (yes/no): ");
+        System.out.print("Confirm delete action (yes): ");
         String confirmation = scanner.nextLine().trim();
 
         if (!"yes".equalsIgnoreCase(confirmation)) {
@@ -315,8 +316,7 @@ public class ManagerMenu {
 
             Transaction transaction = managerController.addDepositTransaction(accountId, amount, description);
             System.out.println("Deposit transaction added successfully!");
-            System.out.println("Transaction ID: " + transaction.getTransactionId());
-            System.out.println("Amount: " + transaction.getAmount() + " MAD");
+            System.out.println(transaction);
         } catch (NumberFormatException e) {
             System.out.println("Please enter a valid amount.");
         } catch (Exception e) {
@@ -338,8 +338,7 @@ public class ManagerMenu {
 
             Transaction transaction = managerController.addWithdrawalTransaction(accountId, amount, description);
             System.out.println("Withdrawal transaction added successfully!");
-            System.out.println("Transaction ID: " + transaction.getTransactionId());
-            System.out.println("Amount: " + transaction.getAmount() + " MAD");
+            System.out.println(transaction);
         } catch (NumberFormatException e) {
             System.out.println("Please enter a valid amount.");
         } catch (Exception e) {
@@ -544,18 +543,10 @@ public class ManagerMenu {
             System.out.println("No transactions found.");
             return;
         }
-
-        System.out.printf("%-15s %-12s %-10s %-20s %-30s%n",
-            "Transaction ID", "Type", "Amount", "Date", "Description");
-        System.out.println(String.join("", Collections.nCopies(90, "-")));
+        System.out.println("List Of Transactions :");
 
         for (Transaction transaction : transactions) {
-            System.out.printf("%-15s %-12s %-10.2f %-20s %-30s%n",
-                transaction.getTransactionId().substring(0, Math.min(12, transaction.getTransactionId().length())),
-                transaction.getTransactionType(),
-                transaction.getAmount(),
-                transaction.getDate().format(dateFormatter),
-                transaction.getDescription() != null ? transaction.getDescription() : "N/A");
+            System.out.println(transaction);
         }
 
         System.out.println("\nTotal transactions: " + transactions.size());

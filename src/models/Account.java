@@ -82,12 +82,6 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account{" +
-                "accountId='" + accountId + '\'' +
-                ", accountType=" + accountType +
-                ", balance=" + balance +
-                ", transactionsCount=" + transactions.size() +
-                ", clientId='" + client.getClientId() + '\'' +
-                '}';
+        return "Account ID# " + accountId + " | Type: " + accountType + " | Balance: " + balance + "$| Transactions: " + transactions.size() + " | Client ID# " + client.getClientId();
     }
 }

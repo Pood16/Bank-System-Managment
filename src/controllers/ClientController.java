@@ -26,7 +26,7 @@ public class ClientController {
 
     public List<Account> viewMyAccounts() {
         return authService.getCurrentClient()
-                .map(client -> client.getAccounts())
+                .map(Client::getAccounts)
                 .orElseThrow(() -> new IllegalStateException("No client logged in"));
     }
 

@@ -2,6 +2,7 @@ package view;
 
 import com.sun.rmi.rmid.ExecPermission;
 import controllers.AuthController;
+import models.Client;
 import models.Manager;
 import models.Person;
 import models.enums.DepartmentType;
@@ -22,7 +23,6 @@ public class MainMenu {
         this.clientMenu = clientMenu;
         this.managerMenu = managerMenu;
         this.scanner = new Scanner(System.in);
-        fakeData();
     }
 
 
@@ -75,7 +75,7 @@ public class MainMenu {
     }
 
     private boolean handleLogin(Role role) {
-        System.out.println("\n--- LOGIN ---");
+        System.out.println("\n----------------------- LOGIN ----------------------- ");
         System.out.print("Email: ");
         String email = scanner.nextLine().trim();
 
@@ -91,6 +91,7 @@ public class MainMenu {
             Optional<Person> user = authController.login(email, password, role);
             if (user.isPresent()) {
                 System.out.println("Login successful! Welcome, " + user.get().getFullName());
+                System.out.println("------------------------------------------\n");
                 return true;
             } else {
                 System.out.println("Invalid credentials. Please try again.");
@@ -102,17 +103,5 @@ public class MainMenu {
         }
     }
 
-    private void waitForEnter() {
-        System.out.println("\nPress Enter to continue...");
-        scanner.nextLine();
-    }
 
-
-    private void fakeData() {
-        try{
-            Manager manager = authController.registerManager("manager", "manager", "manager@manager.com", "password123", DepartmentType.IT);
-        }catch (Exception e) {
-            System.out.println("Failed creating fake data " + e.getMessage());
-        }
-    }
 }

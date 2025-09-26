@@ -43,12 +43,6 @@ public class Client extends Person {
 
     @Override
     public String toString() {
-        return "Client{" +
-                "clientId='" + clientId + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", accountsCount=" + accounts.size() +
-                '}';
+        return "Client ID# " + clientId + " | Client Name: " + firstName + " " + lastName + " | Email: " + email;
     }
 }

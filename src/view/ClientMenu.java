@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Collections;
 
@@ -37,13 +38,11 @@ public class ClientMenu {
     }
 
     private boolean showClientOptions() {
-        Client currentClient = authController.getCurrentClient()
-                .orElseThrow(() -> new IllegalStateException("No client logged in"));
+        Client currentClient = authController.getCurrentClient().orElseThrow(() -> new IllegalStateException("No client logged in"));
 
-        String separator = String.join("", Collections.nCopies(60, "="));
-        System.out.println("\n" + separator);
+        System.out.println("===============================================================");
         System.out.println("    CLIENT DASHBOARD - Welcome " + currentClient.getFullName());
-        System.out.println(separator);
+        System.out.println("===============================================================");
         System.out.println("1.  View Personal Information");
         System.out.println("2.  View My Accounts");
         System.out.println("3.  View Transaction History");
@@ -59,7 +58,7 @@ public class ClientMenu {
         System.out.println("13. View Balance Summary");
         System.out.println("14. Update Personal Information");
         System.out.println("15. Logout");
-        System.out.println(separator);
+        System.out.println("===============================================================");
         System.out.print("Choose an option: ");
 
         try {
@@ -92,18 +91,15 @@ public class ClientMenu {
             System.out.println("Error: " + e.getMessage());
         }
 
-        waitForEnter();
         return true;
     }
 
     private void viewPersonalInformation() {
         System.out.println("\n--- PERSONAL INFORMATION ---");
-        clientController.viewPersonalInformation().ifPresent(client -> {
-            System.out.println("Client ID: " + client.getId());
-            System.out.println("Name: " + client.getFullName());
-            System.out.println("Email: " + client.getEmail());
-            System.out.println("Number of Accounts: " + client.getAccounts().size());
-        });
+        Optional<Client> client = authController.getCurrentClient();
+        if (client.isPresent()) {
+            System.out.println(client.get());
+        }
     }
 
     private void viewMyAccounts() {
@@ -114,16 +110,9 @@ public class ClientMenu {
             System.out.println("No accounts found.");
             return;
         }
-
-        System.out.printf("%-15s %-15s %-15s %-10s%n", "Account ID", "Account Type", "Balance", "Transactions");
-        System.out.println(String.join("", Collections.nCopies(60, "-")));
-
+        System.out.println("List of My Accounts:");
         for (Account account : accounts) {
-            System.out.printf("%-15s %-15s %-15.2f %-10d%n",
-                account.getAccountId(),
-                account.getAccountType(),
-                account.getBalance(),
-                account.getTransactions().size());
+            System.out.println(account);
         }
     }
 
@@ -149,9 +138,7 @@ public class ClientMenu {
             System.out.println("Deposit successful!");
             System.out.println("Transaction ID: " + transaction.getTransactionId());
             System.out.println("Amount: " + transaction.getAmount() + " MAD");
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter a valid amount.");
-        } catch (Exception e) {
+        }catch (Exception e) {
             System.out.println("Deposit failed: " + e.getMessage());
         }
     }
@@ -172,9 +159,7 @@ public class ClientMenu {
             System.out.println("Withdrawal successful!");
             System.out.println("Transaction ID: " + transaction.getTransactionId());
             System.out.println("Amount: " + transaction.getAmount() + " MAD");
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter a valid amount.");
-        } catch (Exception e) {
+        }catch (Exception e) {
             System.out.println("Withdrawal failed: " + e.getMessage());
         }
     }
@@ -256,7 +241,7 @@ public class ClientMenu {
 
     private void filterTransactionsByDate() {
         System.out.println("\n--- FILTER BY DATE RANGE ---");
-        System.out.println("Date format: yyyy-MM-dd HH:mm (e.g., 2024-01-15 10:30)");
+        System.out.println("Date format: yyyy-MM-dd HH:mm (e.g., 2025-01-15 10:30)");
 
         try {
             System.out.print("Start date: ");
@@ -368,25 +353,10 @@ public class ClientMenu {
             System.out.println("No transactions found.");
             return;
         }
-
-        System.out.printf("%-15s %-12s %-10s %-20s %-30s%n",
-            "Transaction ID", "Type", "Amount", "Date", "Description");
-        System.out.println(String.join("", Collections.nCopies(90, "-")));
-
+        System.out.println("Transactions List ");
         for (Transaction transaction : transactions) {
-            System.out.printf("%-15s %-12s %-10.2f %-20s %-30s%n",
-                transaction.getTransactionId().substring(0, Math.min(12, transaction.getTransactionId().length())),
-                transaction.getTransactionType(),
-                transaction.getAmount(),
-                transaction.getDate().format(dateFormatter),
-                transaction.getDescription() != null ? transaction.getDescription() : "N/A");
+            System.out.println(transaction);
         }
-
-        System.out.println("\nTotal transactions: " + transactions.size());
     }
 
-    private void waitForEnter() {
-        System.out.println("\nPress Enter to continue...");
-        scanner.nextLine();
-    }
 }

@@ -53,13 +53,6 @@ public class Manager extends Person {
 
     @Override
     public String toString() {
-        return "Manager{" +
-                "managerId='" + managerId + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", department=" + department +
-                ", clientCount=" + clientList.size() +
-                '}';
+        return "Manager ID# " + managerId + " | Manager Name: " + firstName + " " + lastName + " | Email: " + email + " | Department: " + department + " | Client Count: " + clientList.size();
     }
 }

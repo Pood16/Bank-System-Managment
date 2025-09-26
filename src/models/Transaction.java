@@ -88,14 +88,6 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "Transaction{" +
-                "transactionId='" + transactionId + '\'' +
-                ", transactionType=" + transactionType +
-                ", amount=" + amount +
-                ", date=" + date +
-                ", description='" + description + '\'' +
-                ", sourceAccountId='" + sourceAccount.getAccountId() + '\'' +
-                (destinationAccount != null ? ", destinationAccountId='" + destinationAccount.getAccountId() + '\'' : "") +
-                '}';
+        return "Transaction ID: " + transactionId + " | Transaction Type: " + transactionType + " | Amount: " + amount + " MAD| Date: " + date + " | Description: " + description + " | Source Account ID: " + sourceAccount.getAccountId() + (destinationAccount != null ? " | Destination Account ID: " + destinationAccount.getAccountId() : "");
     }
 }
