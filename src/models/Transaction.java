@@ -2,47 +2,48 @@ package models;
 
 import models.enums.TransactionType;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Transaction {
-    private String id;
-    private TransactionType type;
+    private String transactionId;
+    private TransactionType transactionType;
     private double amount;
-    private LocalDate date;
+    private LocalDateTime date;
     private String description;
     private Account sourceAccount;
     private Account destinationAccount;
 
-    public Transaction(TransactionType type, double amount, String description,Account sourceAccount) {
-        this.id = UUID.randomUUID().toString();
-        this.type = type;
+    public Transaction(TransactionType transactionType, double amount, String description, Account sourceAccount) {
+        this(transactionType, amount, description, sourceAccount, null);
+    }
+
+    public Transaction(TransactionType transactionType, double amount, String description, Account sourceAccount, Account destinationAccount) {
+        this.transactionId = UUID.randomUUID().toString();
+        this.transactionType = transactionType;
         this.amount = amount;
         this.description = description;
-        this.date = LocalDate.now();
         this.sourceAccount = sourceAccount;
+        this.destinationAccount = destinationAccount;
+        this.date = LocalDateTime.now();
     }
 
-    public Transaction(TransactionType type, double amount, String description, Account sourceAccount, Account destinationAccount) {
-       this(type, amount, description, sourceAccount);
-       this.destinationAccount = destinationAccount;
+    // Getters and setters
+    public String getTransactionId() {
+        return transactionId;
     }
 
-
-    public String getId() {
-        return id;
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public TransactionType getTransactionType() {
+        return transactionType;
     }
 
-    public TransactionType getType() {
-        return type;
-    }
-
-    public void setType(TransactionType type) {
-        this.type = type;
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
     public double getAmount() {
@@ -53,11 +54,11 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -88,13 +89,13 @@ public class Transaction {
     @Override
     public String toString() {
         return "Transaction{" +
-                "id='" + id + '\'' +
-                ", type=" + type +
+                "transactionId='" + transactionId + '\'' +
+                ", transactionType=" + transactionType +
                 ", amount=" + amount +
                 ", date=" + date +
                 ", description='" + description + '\'' +
-                ", sourceAccount=" + sourceAccount +
-                ", destinationAccount=" + destinationAccount +
+                ", sourceAccountId='" + sourceAccount.getAccountId() + '\'' +
+                (destinationAccount != null ? ", destinationAccountId='" + destinationAccount.getAccountId() + '\'' : "") +
                 '}';
     }
 }

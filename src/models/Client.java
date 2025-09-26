@@ -4,15 +4,25 @@ import models.enums.Role;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Client extends Person {
-
-
+    private String clientId;
     private List<Account> accounts;
 
-    public Client(String firstName, String lastName, String email, String password, Role role) {
-        super(firstName, lastName, email, password, role);
+    public Client(String firstName, String lastName, String email, String password) {
+        super(firstName, lastName, email, password, Role.CLIENT);
+        this.clientId = UUID.randomUUID().toString();
         this.accounts = new ArrayList<>();
+    }
+
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public List<Account> getAccounts() {
@@ -24,22 +34,21 @@ public class Client extends Person {
     }
 
     public void addAccount(Account account) {
-        accounts.add(account);
+        this.accounts.add(account);
     }
 
     public void removeAccount(Account account) {
-        accounts.remove(account);
+        this.accounts.remove(account);
     }
 
     @Override
     public String toString() {
         return "Client{" +
-                ", id='" + id + '\'' +
+                "clientId='" + clientId + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                "accounts number =" + accounts.size() +
+                ", accountsCount=" + accounts.size() +
                 '}';
     }
-
 }

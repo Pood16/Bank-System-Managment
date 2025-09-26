@@ -1,5 +1,9 @@
 package models.enums;
 
 public enum DepartmentType {
-    X,Y,Z
+    CUSTOMER_SERVICE,
+    OPERATIONS,
+    RISK_MANAGEMENT,
+    COMPLIANCE,
+    IT;
 }
