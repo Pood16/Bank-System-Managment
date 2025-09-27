@@ -1,13 +1,9 @@
 package view;
 
-import com.sun.rmi.rmid.ExecPermission;
 import controllers.AuthController;
-import models.Client;
-import models.Manager;
-import models.Person;
-import models.enums.DepartmentType;
-import models.enums.Role;
 
+import models.Person;
+import models.enums.Role;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Collections;

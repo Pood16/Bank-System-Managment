@@ -67,8 +67,6 @@ public class ManagerMenu {
         System.out.println("15. Detect Suspicious Transactions");
         System.out.println("16. View Transaction Statistics");
         System.out.println("17. View Account Type Statistics");
-        System.out.println("18. View Top Clients by Balance");
-        System.out.println("19. Calculate Total System Balance");
         System.out.println();
         System.out.println("20. Logout");
         System.out.print("Choose an option: ");
@@ -93,8 +91,6 @@ public class ManagerMenu {
                 case 15: detectSuspiciousTransactions(); break;
                 case 16: viewTransactionStatistics(); break;
                 case 17: viewAccountTypeStatistics(); break;
-                case 18: viewTopClientsByBalance(); break;
-//                case 19: calculateTotalSystemBalance(); break;
                 case 20:
                     authController.logout();
                     System.out.println("Logged out successfully!");
@@ -446,7 +442,6 @@ public class ManagerMenu {
         }
     }
 
-
     private void detectSuspiciousTransactions() {
         System.out.println("\n--- SUSPICIOUS TRANSACTIONS DETECTED ---");
         try {
@@ -498,43 +493,6 @@ public class ManagerMenu {
             System.out.printf("Total: %d accounts%n", total);
         } catch (Exception e) {
             System.out.println("Failed to get account statistics: " + e.getMessage());
-        }
-    }
-
-    private void viewTopClientsByBalance() {
-        System.out.println("\n--- TOP CLIENTS BY BALANCE ---");
-        System.out.print("Number of top clients to show (default 10): ");
-        String input = scanner.nextLine().trim();
-
-        int limit = 10;
-        if (!input.isEmpty()) {
-            try {
-                limit = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid number, using default (10).");
-            }
-        }
-
-        try {
-            List<Client> topClients = managerController.getTopClientsByBalance(limit);
-
-            if (topClients.isEmpty()) {
-                System.out.println("No clients found.");
-                return;
-            }
-
-            System.out.printf("%-15s %-25s %-15s%n", "Client ID", "Name", "Total Balance");
-            System.out.println(String.join("", Collections.nCopies(60, "-")));
-
-            for (Client client : topClients) {
-                double balance = managerController.calculateClientTotalBalance(client.getId());
-                System.out.printf("%-15s %-25s %-15.2f%n",
-                    client.getId(),
-                    client.getFullName(),
-                    balance);
-            }
-        } catch (Exception e) {
-            System.out.println("Failed to get top clients: " + e.getMessage());
         }
     }
 

@@ -170,16 +170,4 @@ public class ManagerController {
         return managerService.getAccountTypeStatistics();
     }
 
-    public List<Client> getTopClientsByBalance(int limit) {
-        authService.getCurrentManager()
-                .orElseThrow(() -> new IllegalStateException("No manager logged in"));
-        return managerService.getTopClientsByBalance(limit);
-    }
-
-    // Validation
-    public boolean validateSufficientBalance(String accountId, double amount) {
-        authService.getCurrentManager()
-                .orElseThrow(() -> new IllegalStateException("No manager logged in"));
-        return managerService.validateSufficientBalance(accountId, amount);
-    }
 }
