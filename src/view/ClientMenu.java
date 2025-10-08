@@ -52,6 +52,7 @@ public class ClientMenu {
         System.out.println("7.  Filter Transactions by Type");
         System.out.println("8.  Filter Transactions by Amount Range");
         System.out.println("9.  Filter Transactions by Date Range");
+        System.out.println("20.  Filter Transactions by given amount");
         System.out.println("10. Sort Transactions by Amount");
         System.out.println("11. Sort Transactions by Date");
         System.out.println("12. Calculate Total Balance");
@@ -97,10 +98,9 @@ public class ClientMenu {
     private void viewPersonalInformation() {
         System.out.println("\n--- PERSONAL INFORMATION ---");
         Optional<Client> client = authController.getCurrentClient();
-        if (client.isPresent()) {
-            System.out.println(client.get());
-        }
+        client.ifPresent(System.out::println);
     }
+
 
     private void viewMyAccounts() {
         System.out.println("\n--- MY ACCOUNTS ---");
@@ -241,7 +241,7 @@ public class ClientMenu {
 
     private void filterTransactionsByDate() {
         System.out.println("\n--- FILTER BY DATE RANGE ---");
-        System.out.println("Date format: yyyy-MM-dd HH:mm (e.g., 2025-01-15 10:30)");
+        System.out.println("Date format: yyyy-MM-dd HH:mm (2025-01-15 10:30)");
 
         try {
             System.out.print("Start date: ");

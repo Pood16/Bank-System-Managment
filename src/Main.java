@@ -22,7 +22,7 @@ public class Main {
             AuthController authController = new AuthController(authService);
             ClientController clientController = new ClientController(clientService, authService);
             ManagerController managerController = new ManagerController(managerService, clientService, accountService, authService);
-            TransactionController transactionController = new TransactionController(accountService, authService);
+            TransactionController transactionController = new TransactionController(accountService, authService, transactionService);
 
             ClientMenu clientMenu = new ClientMenu(clientController, transactionController, authController);
             ManagerMenu managerMenu = new ManagerMenu(managerController, authController);

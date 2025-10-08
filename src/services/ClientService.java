@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -99,26 +100,30 @@ public class ClientService {
 
     public List<Transaction> getClientTransactionHistory(String clientId) {
         Client client = findClientById(clientId);
-        return client.getAccounts().stream()
+        return client.getAccounts()
+                .stream()
                 .flatMap(account -> account.getTransactions().stream())
                 .sorted(Comparator.comparing(Transaction::getDate).reversed())
                 .collect(Collectors.toList());
     }
 
     public List<Transaction> filterTransactionsByType(String clientId, TransactionType type) {
-        return getClientTransactionHistory(clientId).stream()
+        return getClientTransactionHistory(clientId)
+                .stream()
                 .filter(transaction -> transaction.getTransactionType() == type)
                 .collect(Collectors.toList());
     }
 
     public List<Transaction> filterTransactionsByAmount(String clientId, double minAmount, double maxAmount) {
-        return getClientTransactionHistory(clientId).stream()
+        return getClientTransactionHistory(clientId)
+                .stream()
                 .filter(transaction -> transaction.getAmount() >= minAmount && transaction.getAmount() <= maxAmount)
                 .collect(Collectors.toList());
     }
 
     public List<Transaction> filterTransactionsByDate(String clientId, LocalDateTime startDate, LocalDateTime endDate) {
-        return getClientTransactionHistory(clientId).stream()
+        return getClientTransactionHistory(clientId)
+                .stream()
                 .filter(transaction -> {
                     LocalDateTime transactionDate = transaction.getDate();
                     return transactionDate.isAfter(startDate) && transactionDate.isBefore(endDate);
@@ -127,7 +132,8 @@ public class ClientService {
     }
 
     public List<Transaction> filterTransactions(String clientId, Predicate<Transaction> filter) {
-        return getClientTransactionHistory(clientId).stream()
+        return getClientTransactionHistory(clientId)
+                .stream()
                 .filter(filter)
                 .collect(Collectors.toList());
     }
@@ -149,34 +155,39 @@ public class ClientService {
             comparator = comparator.reversed();
         }
 
-        return getClientTransactionHistory(clientId).stream()
+        return getClientTransactionHistory(clientId)
+                .stream()
                 .sorted(comparator)
                 .collect(Collectors.toList());
     }
 
     public double calculateTotalBalance(String clientId) {
         Client client = findClientById(clientId);
-        return client.getAccounts().stream()
+        return client.getAccounts()
+                .stream()
                 .mapToDouble(Account::getBalance)
                 .sum();
     }
 
     public double calculateTotalDeposits(String clientId) {
-        return getClientTransactionHistory(clientId).stream()
+        return getClientTransactionHistory(clientId)
+                .stream()
                 .filter(transaction -> transaction.getTransactionType() == TransactionType.DEPOSIT)
                 .mapToDouble(Transaction::getAmount)
                 .sum();
     }
 
     public double calculateTotalWithdrawals(String clientId) {
-        return getClientTransactionHistory(clientId).stream()
+        return getClientTransactionHistory(clientId)
+                .stream()
                 .filter(transaction -> transaction.getTransactionType() == TransactionType.WITHDRAWAL)
                 .mapToDouble(Transaction::getAmount)
                 .sum();
     }
 
     public double calculateTotalTransfers(String clientId) {
-        return getClientTransactionHistory(clientId).stream()
+        return getClientTransactionHistory(clientId)
+                .stream()
                 .filter(transaction -> transaction.getTransactionType() == TransactionType.TRANSFER)
                 .mapToDouble(Transaction::getAmount)
                 .sum();
@@ -194,4 +205,5 @@ public class ClientService {
     public void removeClient(Client client) {
         clients.remove(client);
     }
+
 }

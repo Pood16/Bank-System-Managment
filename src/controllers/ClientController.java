@@ -6,6 +6,7 @@ import models.Transaction;
 import models.enums.TransactionType;
 import services.ClientService;
 import services.AuthService;
+import services.TransactionService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,14 +16,12 @@ public class ClientController {
     private final ClientService clientService;
     private final AuthService authService;
 
+
     public ClientController(ClientService clientService, AuthService authService) {
         this.clientService = clientService;
         this.authService = authService;
     }
 
-    public Optional<Client> viewPersonalInformation() {
-        return authService.getCurrentClient();
-    }
 
     public List<Account> viewMyAccounts() {
         return authService.getCurrentClient()
@@ -95,4 +94,9 @@ public class ClientController {
                 .map(client -> clientService.updateClient(client.getClientId(), firstName, lastName, email))
                 .orElseThrow(() -> new IllegalStateException("No client logged in"));
     }
+
+
+
+
+
 }

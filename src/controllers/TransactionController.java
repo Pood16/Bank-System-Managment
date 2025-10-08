@@ -5,19 +5,23 @@ import models.Account;
 import models.enums.TransactionType;
 import services.AccountService;
 import services.AuthService;
+import services.TransactionService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TransactionController {
     private final AccountService accountService;
     private final AuthService authService;
+    private final TransactionService transactionService;
 
-    public TransactionController(AccountService accountService, AuthService authService) {
+    public TransactionController(AccountService accountService, AuthService authService, TransactionService transactionService) {
         this.accountService = accountService;
         this.authService = authService;
+        this.transactionService = transactionService;
     }
 
     public Transaction makeDeposit(String accountId, double amount, String description) {
@@ -152,4 +156,10 @@ public class TransactionController {
         return filterTransactions(accountId, transaction ->
             transaction.getAmount() >= minAmount && transaction.getAmount() <= maxAmount);
     }
+
+    public List<Transaction> test(double amount) {
+        return transactionService.getTransactionByGivenAmount(amount);
+    }
+
+
 }

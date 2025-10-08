@@ -139,6 +139,14 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
+
+    public List<Transaction> getTransactionByGivenAmount(double amount){
+        return transactions
+                .stream()
+                .filter(transaction -> transaction.getAmount() <= amount)
+                .collect(Collectors.toList());
+    }
+
     public List<Transaction> getAllTransactions() {
         return new ArrayList<>(transactions);
     }

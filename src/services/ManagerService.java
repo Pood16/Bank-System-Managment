@@ -110,7 +110,8 @@ public class ManagerService {
     }
 
     public List<Transaction> getAllTransactions() {
-        return clientService.getAllClients().stream()
+        return clientService.getAllClients()
+                .stream()
                 .flatMap(client -> client.getAccounts().stream())
                 .flatMap(account -> account.getTransactions().stream())
                 .sorted(Comparator.comparing(Transaction::getDate).reversed())
@@ -149,49 +150,12 @@ public class ManagerService {
         List<Transaction> allTransactions = getAllTransactions();
 
         double highAmountThreshold = 10000.0;
-        int repetitiveThreshold = 5;
 
-        List<Transaction> highAmountTransactions = allTransactions.stream()
+        List<Transaction> highAmountTransactions = allTransactions
+                .stream()
                 .filter(transaction -> transaction.getAmount() > highAmountThreshold)
                 .collect(Collectors.toList());
         suspiciousTransactions.addAll(highAmountTransactions);
-
-        Map<String, List<Transaction>> transactionsByAccount = allTransactions.stream()
-                .collect(Collectors.groupingBy(transaction -> transaction.getSourceAccount().getAccountId()));
-
-        for (List<Transaction> accountTransactions : transactionsByAccount.values()) {
-            Map<Double, List<Transaction>> transactionsByAmount = accountTransactions.stream()
-                    .collect(Collectors.groupingBy(Transaction::getAmount));
-
-            for (List<Transaction> sameAmountTransactions : transactionsByAmount.values()) {
-                if (sameAmountTransactions.size() >= repetitiveThreshold) {
-                    sameAmountTransactions.sort(Comparator.comparing(Transaction::getDate));
-                    LocalDateTime firstTransaction = sameAmountTransactions.get(0).getDate();
-                    LocalDateTime lastTransaction = sameAmountTransactions.get(sameAmountTransactions.size() - 1).getDate();
-
-                    if (firstTransaction.plusHours(24).isAfter(lastTransaction)) {
-                        suspiciousTransactions.addAll(sameAmountTransactions);
-                    }
-                }
-            }
-        }
-
-        Map<String, List<Transaction>> withdrawalsByAccount = allTransactions.stream()
-                .filter(transaction -> transaction.getTransactionType() == TransactionType.WITHDRAWAL)
-                .filter(transaction -> transaction.getAmount() > 5000.0)
-                .collect(Collectors.groupingBy(transaction -> transaction.getSourceAccount().getAccountId()));
-
-        for (List<Transaction> withdrawals : withdrawalsByAccount.values()) {
-            if (withdrawals.size() >= 3) {
-                withdrawals.sort(Comparator.comparing(Transaction::getDate));
-                LocalDateTime firstWithdrawal = withdrawals.get(0).getDate();
-                LocalDateTime lastWithdrawal = withdrawals.get(withdrawals.size() - 1).getDate();
-
-                if (firstWithdrawal.plusHours(48).isAfter(lastWithdrawal)) {
-                    suspiciousTransactions.addAll(withdrawals);
-                }
-            }
-        }
 
         return suspiciousTransactions.stream()
                 .distinct()
@@ -251,6 +215,8 @@ public class ManagerService {
             return false;
         }
     }
+
+
 
     public void addManager(Manager manager) {
         managers.add(manager);
